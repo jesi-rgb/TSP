@@ -1,0 +1,8 @@
+# TSP/src/tsp.py: 7
+bullet == 2.2.0
+
+# TSP/src/tsp.py: 4
+elkai == 0.1.2
+
+# TSP/src/tsp.py: 5
+scikit_learn == 0.24.1
