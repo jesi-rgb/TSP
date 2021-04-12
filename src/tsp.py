@@ -1,10 +1,13 @@
 import os
 import time
 
+from numpy.lib.stride_tricks import sliding_window_view
+import numpy as np
+
 from elkai import solve_float_matrix
 from sklearn.metrics.pairwise import euclidean_distances
 
-from bullet import Bullet
+from bullet import Bullet, Numbers
 
 data_files = [f.split('.')[0] for f in os.listdir("data")]
 # assist user in selecting file
@@ -44,14 +47,24 @@ dists = euclidean_distances(nodelist)
 
 print()
 print("> Starting execution for file: {}".format(name))
-print("> Matrix dimensions: {}".format(dists.shape))
+print("> Matrix dimensions: {}\n".format(dists.shape))
 
+cli_n = Numbers(prompt="> Select number of iterations: ")
+iterations = cli_n.launch()
+
+print()
 print("> Calculating solution. \nProblems over 500 cities can take several minutes...\n")
 
 start_time = time.time()
-print("> Proposed solution: {}\n".format(solve_float_matrix(dists, runs=10)))
-
+solution = solve_float_matrix(dists, runs=iterations)
 end_time = time.time() - start_time
+
+solution_pairs = sliding_window_view(solution, 2)
+
+total_length = np.sum([dists[pair[0], pair[1]] for pair in solution_pairs])
+
+print("> Proposed solution: {} with length {:.2f}\n".format(solution, total_length))
+
 hours, rem = divmod(end_time, 3600)
 minutes, seconds = divmod(rem, 60)
 print("------------- Process terminated in {:0>2} hours, {:0>2} minutes and {:05.2f} seconds. -------------".format(int(hours),int(minutes), seconds))
